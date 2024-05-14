@@ -10,7 +10,7 @@ Usage:
 Arguments:
     -P, --path: The absolute path to the directory containing pcap files.
     -N, --process_num: The number of processes to use for parallel processing.
-    -S, --script: The absolute path to the zeek script.
+    -S, --script: The absolute path to the zeek script. (optional)
 
 Example:
     python get_zeeklog.py -P /path/to/pcap/files -N 4 -S /path/to/zeek/script
@@ -22,9 +22,9 @@ import argparse
 import multiprocessing
 
 parser = argparse.ArgumentParser(description='Get zeek log files from pcap files.')
-parser.add_argument('-P', '--path', dest='path', type=str, help='The absolute path to the directory.')
-parser.add_argument('-N', '--process_num', dest='process_num', type=int, help='The number of processes.')
-parser.add_argument('-S', '--script', dest='script', type=str, help='The absolute path to the zeek script.')
+parser.add_argument('-P', '--path', dest='path', type=str, required=True,help='The absolute path to the directory.')
+parser.add_argument('-N', '--process_num', dest='process_num', required=True,type=int, help='The number of processes.')
+parser.add_argument('-S', '--script', dest='script', required=False, type=str, help='The absolute path to the zeek script. (optional)')
 args = parser.parse_args()
 
 
@@ -69,7 +69,10 @@ def get_logfile(pcapfile:str, scirpt:str)->None:
     """
     print(f'Processing {pcapfile}...')
     pcapfilename = pcapfile.split("/")[-1].split(".")[0]
-    os.system(f'mkdir zeeklog/{pcapfilename}; cd zeeklog/{pcapfilename}; zeek -C -r {pcapfile} {scirpt}')
+    if scirpt is None:
+        os.system(f'mkdir zeeklog/{pcapfilename}; cd zeeklog/{pcapfilename}; zeek -C -r {pcapfile}')
+    else:
+        os.system(f'mkdir zeeklog/{pcapfilename}; cd zeeklog/{pcapfilename}; zeek -C -r {pcapfile} {scirpt}')
     print(f'{pcapfile} done.')
 
 main_path = args.path
