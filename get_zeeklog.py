@@ -68,7 +68,7 @@ def get_logfile(pcapfile:str, scirpt:str)->None:
         script (str): The path to the script.
     """
     print(f'Processing {pcapfile}...')
-    pcapfilename = pcapfile.split("/")[-1].split(".")[0]
+    pcapfilename = '.'.join(os.path.basename(pcapfile).split(".")[:-1])
     if scirpt is None:
         os.system(f'mkdir zeeklog/{pcapfilename}; cd zeeklog/{pcapfilename}; zeek -C -r {pcapfile}')
     else:
